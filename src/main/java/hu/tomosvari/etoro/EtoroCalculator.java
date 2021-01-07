@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -43,7 +42,7 @@ public class EtoroCalculator {
     }
 
     private XSSFWorkbook readWorkbook(String fileLocation) throws IOException {
-        try (FileInputStream file = new FileInputStream(new File(fileLocation))) {
+        try (FileInputStream file = new FileInputStream(fileLocation)) {
             return new XSSFWorkbook(file);
         }
     }
@@ -71,8 +70,6 @@ public class EtoroCalculator {
                     .build();
 
                 transactions.add(transaction);
-
-                log.debug(transaction.toString());
             } catch (Exception e) {
                 log.warn("Error during parsing a transaction, skipping", e);
             }

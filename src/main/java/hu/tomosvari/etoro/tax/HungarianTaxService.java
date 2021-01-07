@@ -15,7 +15,6 @@ import static hu.tomosvari.etoro.TransactionStatisticsService.sumProfit;
 @Slf4j
 public class HungarianTaxService implements TaxService {
 
-
     public static final String TAX_RATE = "0.15";
 
     @Override
@@ -35,16 +34,16 @@ public class HungarianTaxService implements TaxService {
             BigDecimal exchangeRate = getLatestExchangeRate(exchangeRates, transaction.getClosedAt().toLocalDate());
             BigDecimal profitInHuf = transaction.getProfit().multiply(exchangeRate);
 
-            log.debug("Transaction {} with profit ${} in HUF is {} using rate {}", transaction.getPositionId(), transaction.getProfit(), profitInHuf, exchangeRate);
+            log.debug("Transaction {} closed at {} with profit ${} in HUF is {} using rate {}", transaction.getPositionId(), transaction.getClosedAt(), transaction.getProfit(), profitInHuf, exchangeRate);
 
             transactionsSumInHUF = transactionsSumInHUF.add(profitInHuf);
         }
 
-        HungarianTaxService.log.info("Profit in USD: ${}", sumProfit(transactions));
-        HungarianTaxService.log.info("Profit in HUF: {} HUF - exchanged each transaction on transaction close date MNB mid exchange rate.", transactionsSumInHUF);
+        log.info("Profit in USD: ${}", sumProfit(transactions));
+        log.info("Profit in HUF: {} HUF - exchanged each transaction on transaction close date MNB mid exchange rate.", transactionsSumInHUF);
 
         BigDecimal taxToPayInHUF = transactionsSumInHUF.multiply(taxRate);
-        HungarianTaxService.log.info("Tax to pay in HUF: {}, with tax rate of {}%", taxToPayInHUF, taxRate.multiply(new BigDecimal("100")));
+        log.info("Tax to pay in HUF: {}, with tax rate of {}%", taxToPayInHUF, taxRate.multiply(new BigDecimal("100")));
 
         return taxToPayInHUF;
     }

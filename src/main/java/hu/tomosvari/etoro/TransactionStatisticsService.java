@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Set;
 
 @Slf4j
@@ -26,12 +27,15 @@ public class TransactionStatisticsService {
     }
 
     public static void printStatistics(Set<Transaction> transactions) {
-        log.info("STATS - SUM: {}, COUNT: {}, GAINING: {}, LOSING: {}, AVG: {}, MIN: {}, MAX: {}",
-            sumProfit(transactions),
-            transactions.size(),
-            countGainingTransactions(transactions),
-            countLosingTransactions(transactions),
-            calculateAverage(transactions),
-            2,3);
+        Transaction max = Collections.max(transactions, new TransactionValueComparator());
+        Transaction min = Collections.min(transactions, new TransactionValueComparator());
+        log.info("STATS - SUM: ${}, TR COUNT: {}, GAINING TRS: {}, LOSING TRS: {}, AVG GAIN: ${}, WORST TR: ${}, BEST TR: ${}",
+                sumProfit(transactions),
+                transactions.size(),
+                countGainingTransactions(transactions),
+                countLosingTransactions(transactions),
+                calculateAverage(transactions),
+                min.getProfit(),
+                max.getProfit());
     }
 }

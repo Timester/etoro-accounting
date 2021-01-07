@@ -48,7 +48,10 @@ public class UsdHufMNBRatesService implements ExchangeRatesService {
             String usd = mnbService.getExchangeRates(from.toString(), to.toString(), USD_CURRENCY);
 
             Document exchangeRatesResponse = parseXmlResponse(usd);
-            printDocument(exchangeRatesResponse, System.out);
+
+            if (log.isDebugEnabled()) {
+                printDocument(exchangeRatesResponse, System.out);
+            }
 
             if (exchangeRatesResponse != null) {
                 NodeList days = exchangeRatesResponse.getElementsByTagName("Day");

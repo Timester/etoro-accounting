@@ -1,7 +1,7 @@
 
 package hu.tomosvari.etoro.exchange.mnb;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 
 /**

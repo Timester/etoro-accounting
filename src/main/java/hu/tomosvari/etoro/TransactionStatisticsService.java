@@ -15,7 +15,7 @@ public class TransactionStatisticsService {
 
     public static BigDecimal calculateAverage(Set<Transaction> transactions) {
         BigDecimal sum = sumProfit(transactions);
-        return sum.divide(new BigDecimal(transactions.size()), RoundingMode.FLOOR);
+        return sum.divide(new BigDecimal(transactions.size()), 2, RoundingMode.HALF_EVEN);
     }
 
     public static long countGainingTransactions(Set<Transaction> transactions) {
@@ -26,16 +26,22 @@ public class TransactionStatisticsService {
         return transactions.stream().filter(x -> x.getProfit().compareTo(BigDecimal.ZERO) < 0).count();
     }
 
+    public static Transaction getWorstTransaction(Set<Transaction> transactions) {
+        return Collections.min(transactions, new TransactionValueComparator());
+    }
+
+    public static Transaction getBestTransaction(Set<Transaction> transactions) {
+        return Collections.max(transactions, new TransactionValueComparator());
+    }
+
     public static void printStatistics(Set<Transaction> transactions) {
-        Transaction max = Collections.max(transactions, new TransactionValueComparator());
-        Transaction min = Collections.min(transactions, new TransactionValueComparator());
         log.info("STATS - SUM: ${}, TR COUNT: {}, GAINING TRS: {}, LOSING TRS: {}, AVG GAIN: ${}, WORST TR: ${}, BEST TR: ${}",
                 sumProfit(transactions),
                 transactions.size(),
                 countGainingTransactions(transactions),
                 countLosingTransactions(transactions),
                 calculateAverage(transactions),
-                min.getProfit(),
-                max.getProfit());
+                getWorstTransaction(transactions).getProfit(),
+                getBestTransaction(transactions).getProfit());
     }
 }

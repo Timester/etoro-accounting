@@ -1,12 +1,12 @@
 package hu.tomosvari.etoro;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 @Builder
 public class Transaction {
     private final String positionId;

@@ -20,6 +20,10 @@ java {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
@@ -28,7 +32,9 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.2'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.10.0'
+
 
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
 }

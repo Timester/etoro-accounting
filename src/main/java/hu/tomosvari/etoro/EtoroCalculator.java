@@ -1,19 +1,13 @@
 package hu.tomosvari.etoro;
 
-import hu.tomosvari.etoro.tax.HungarianTaxService;
+import hu.tomosvari.etoro.exchange.hungary.UsdHufMNBRatesService;
+import hu.tomosvari.etoro.tax.hungary.HungarianTaxService;
 import hu.tomosvari.etoro.tax.TaxService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import static hu.tomosvari.etoro.TransactionStatisticsService.printStatistics;
@@ -34,10 +28,10 @@ public class EtoroCalculator {
             System.exit(14);
         }
 
-        Set<Transaction> transactions = parseTransactions(workbook);
+        Set<Transaction> transactions = EtoroAccountStatementParser.parseTransactions(workbook);
         printStatistics(transactions);
 
-        TaxService taxService = new HungarianTaxService();
+        TaxService taxService = new HungarianTaxService(new UsdHufMNBRatesService());
         taxService.calculateTax(transactions);
     }
 
@@ -45,36 +39,5 @@ public class EtoroCalculator {
         try (FileInputStream file = new FileInputStream(fileLocation)) {
             return new XSSFWorkbook(file);
         }
-    }
-
-    private Set<Transaction> parseTransactions(XSSFWorkbook workbook) {
-        Sheet sheet = workbook.getSheetAt(1);
-        Iterator<Row> rowIterator = sheet.rowIterator();
-
-        Set<Transaction> transactions = new HashSet<>();
-
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-
-            if (row.getRowNum() == 0) {
-                log.debug("Skipping first row");
-                continue;
-            }
-
-            try {
-                Transaction transaction = Transaction.builder()
-                    .positionId(row.getCell(0).getStringCellValue())
-                    .profit(new BigDecimal(row.getCell(8).getStringCellValue()))
-                    .closedAt(LocalDateTime.parse(row.getCell(10).getStringCellValue(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")))
-                    .isReal("Real".equals(row.getCell(14).getStringCellValue()))
-                    .build();
-
-                transactions.add(transaction);
-            } catch (Exception e) {
-                log.warn("Error during parsing a transaction, skipping", e);
-            }
-        }
-
-        return transactions;
     }
 }
